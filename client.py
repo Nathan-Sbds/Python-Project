@@ -36,9 +36,6 @@ def make_api_request():
         if selected_function in ["Tracks by Album ID", "Tracks by Playlist ID", "Tracks by Artist ID", "Tracks by Genre ID", "Tracks by Customer ID"] and shuffle_var.get() == 1:
             api_endpoint += "/shuffle"
 
-        # Print the API endpoint for debugging purposes
-        print(api_endpoint)
-
         # Make a GET request to the API endpoint
         response = requests.get(api_endpoint)
 
