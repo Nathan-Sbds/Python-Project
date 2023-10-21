@@ -12,17 +12,18 @@ functions = {
     "Tracks by Playlist ID": "/playlist/param_to_set",
     "Tracks by Artist ID": "/artist/param_to_set/tracks",
     "Tracks by Genre ID": "/genre/param_to_set/tracks",
-    "Tracks by Customer ID": "/customer/param_to_set/tracks"
+    "Tracks by Customer ID": "/customer/param_to_set/tracks",
 }
+
 
 # Function to make API requests
 def make_api_request():
     """
     Make a request to the API based on the selected function and parameter.
-    
+
     Parameters:
     None
-    
+
     Returns:
     None
     """
@@ -32,8 +33,20 @@ def make_api_request():
 
     # Construct the API endpoint based on the selected function and parameter
     if selected_function in functions:
-        api_endpoint = "http://127.0.0.1:8000" + functions[selected_function].replace("param_to_set", param)
-        if selected_function in ["Tracks by Album ID", "Tracks by Playlist ID", "Tracks by Artist ID", "Tracks by Genre ID", "Tracks by Customer ID"] and shuffle_var.get() == 1:
+        api_endpoint = "http://127.0.0.1:8000" + functions[selected_function].replace(
+            "param_to_set", param
+        )
+        if (
+            selected_function
+            in [
+                "Tracks by Album ID",
+                "Tracks by Playlist ID",
+                "Tracks by Artist ID",
+                "Tracks by Genre ID",
+                "Tracks by Customer ID",
+            ]
+            and shuffle_var.get() == 1
+        ):
             api_endpoint += "/shuffle"
 
         # Make a GET request to the API endpoint
@@ -44,24 +57,37 @@ def make_api_request():
             data = response.json()
             display_data(data)
         else:
-            display_data({"Error": f"Request failed with status code: {response.status_code}"})
+            display_data(
+                {"Error": f"Request failed with status code: {response.status_code}"}
+            )
+
 
 # Function to display API response data
 def display_data(data):
     """
     Format and display the API response data.
-    
+
     Parameters:
     data (dict): The data retrieved from the API.
-    
+
     Returns:
     None
     """
     # Format the data to display it in the text field
     formatted_data = json.dumps(data, indent=2)
-    lines = formatted_data.split('\n')
-    clean_lines = [line for line in lines if all(char not in line for char in ['{', '}', ']', '    ['])]
-    clean_data = '\n'.join(clean_lines).replace(',', "").replace('[', "").replace('"', "").replace("£", "£\n")
+    lines = formatted_data.split("\n")
+    clean_lines = [
+        line
+        for line in lines
+        if all(char not in line for char in ["{", "}", "]", "    ["])
+    ]
+    clean_data = (
+        "\n".join(clean_lines)
+        .replace(",", "")
+        .replace("[", "")
+        .replace('"', "")
+        .replace("£", "£\n")
+    )
     clean_data = bytes(clean_data, "utf-8").decode("unicode_escape")
 
     # Update the text field with the formatted data
@@ -70,23 +96,31 @@ def display_data(data):
     result_text.insert(tk.END, clean_data)
     result_text.configure(state="disabled")
 
+
 # Function triggered when a function is selected
 def on_function_selection(event):
     """
     Show or hide the shuffle checkbox based on the selected function.
-    
+
     Parameters:
     event (Event): The event triggered by function selection.
-    
+
     Returns:
     None
     """
     # Show the shuffle checkbox if the selected function requires it, otherwise hide it
     selected_function = function_combobox.get()
-    if selected_function in ["Tracks by Album ID", "Tracks by Playlist ID", "Tracks by Artist ID", "Tracks by Genre ID", "Tracks by Customer ID"]:
+    if selected_function in [
+        "Tracks by Album ID",
+        "Tracks by Playlist ID",
+        "Tracks by Artist ID",
+        "Tracks by Genre ID",
+        "Tracks by Customer ID",
+    ]:
         shuffle_checkbox.grid(row=1, column=2, columnspan=2)
     else:
         shuffle_checkbox.grid_forget()
+
 
 # Create the main window
 root = tk.Tk()
@@ -125,7 +159,7 @@ result_text.grid(row=3, column=0, columnspan=3, sticky="nsew")
 
 # Create the scrollbar for the result text field
 scrollbar = tk.Scrollbar(root, command=result_text.yview)
-scrollbar.grid(row=3, column=3, sticky='ns')
+scrollbar.grid(row=3, column=3, sticky="ns")
 
 result_text.config(yscrollcommand=scrollbar.set)
 
